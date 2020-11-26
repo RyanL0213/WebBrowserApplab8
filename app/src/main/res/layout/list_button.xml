@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/bookmarktitle"
+        android:layout_width="349dp"
+        android:layout_height="69dp"
+        android:layout_weight="1"
+        android:text="TextView" />
+
+    <ImageButton
+        android:id="@+id/trash"
+        android:layout_width="wrap_content"
+        android:layout_height="64dp"
+        android:layout_weight="1"
+        app:srcCompat="@android:drawable/ic_menu_delete"
+        android:contentDescription="TODO" />
+</LinearLayout>
