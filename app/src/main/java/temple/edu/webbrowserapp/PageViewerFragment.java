@@ -22,6 +22,7 @@ public class PageViewerFragment extends Fragment implements Parcelable {
     private String currentUrl;
     String currentTitle;
     sentCurrentUrlInterface parentActivity;
+    View v;
     private boolean avoidMultipleCall; //a lock to ensure onPageStart and onPageFinished does not get call when user make swipe across the viewpager
     public PageViewerFragment() {
         // Required empty public constructor
@@ -59,7 +60,7 @@ public class PageViewerFragment extends Fragment implements Parcelable {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v=inflater.inflate(R.layout.fragment_page_viewer, container, false);
+        v=inflater.inflate(R.layout.fragment_page_viewer, container, false);
         webView= v.findViewById(R.id.webView);
         webView.canGoBack();
         webView.canGoForward();
@@ -95,6 +96,7 @@ public class PageViewerFragment extends Fragment implements Parcelable {
             savedInstanceState.getString("url", currentUrl);
             savedInstanceState.getString("title", currentTitle);
         }
+        //webView.loadUrl("temple.edu");
         return v;
     }
 
@@ -108,6 +110,40 @@ public class PageViewerFragment extends Fragment implements Parcelable {
 
     public void gettingUrl(String message) {
         currentUrl=message;
+        /*if(webView==null){
+            webView= v.findViewById(R.id.webView);
+            webView.canGoBack();
+            webView.canGoForward();
+            avoidMultipleCall=false;
+            webView.setWebViewClient(new WebViewClient() {
+                @Override
+                public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                    super.onPageStarted(view, url, favicon);
+                    if(avoidMultipleCall!=false) {
+                        parentActivity.sentlink(url);
+                    }
+                }
+                @Override
+                public void onPageFinished(WebView view, String url) {
+                    if(avoidMultipleCall!=false) {
+                        currentTitle=view.getTitle();
+                        getActivity().setTitle(view.getTitle());
+                        avoidMultipleCall=false;
+                    }
+                }
+            });
+//        currentTitle=webView.getTitle();
+//        currentUrl=webView.getUrl();
+//        parentActivity.sentTitle(currentTitle);
+//        parentActivity.sentlink(currentUrl);
+
+            webView.getSettings().setLoadsImagesAutomatically(true);
+            webView.getSettings().setJavaScriptEnabled(true); //enable javascript
+            webView.getSettings().setLoadWithOverviewMode(true);
+            webView.getSettings().setUseWideViewPort(true);
+        }
+
+         */
         webView.loadUrl(currentUrl);
     }
 

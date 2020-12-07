@@ -1,5 +1,6 @@
 package temple.edu.webbrowserapp;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -10,8 +11,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PersistableBundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -44,14 +48,23 @@ PagerFragment.PagerInterface, PageListFragment.PageListInterface {
         setContentView(R.layout.activity_main);
         manager=getSupportFragmentManager();
 
+        Intent getintent;
+
+
+
+
         Fragment temporary;
 
         if(savedInstanceState!=null)
             pages=(ArrayList) savedInstanceState.getSerializable(PAGE_KEY);
-        else
-            pages=new ArrayList<>();
+        else {
+            pages = new ArrayList<>();
+           // pages.add(new PageViewerFragment());
+          //  pages.get(0).webView.loadUrl("temple.edu");
+        }
 
         orientation=getResources().getConfiguration().orientation;
+        //buttonClick("temple.edu");
 
 
 
@@ -87,6 +100,31 @@ PagerFragment.PagerInterface, PageListFragment.PageListInterface {
                 manager.beginTransaction().add(R.id.page_list_container, pageListFragment).commit();
             }
         }
+
+
+
+       /* if(pages.size()>0){
+            Log.d("null","page is null");
+            pages.add(new PageViewerFragment());
+           // notifyWebsitesChanged();
+            pagerFragment.showTab(pages.size()-1);
+            pagerFragment.go("temple.edu");
+        }
+
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    buttonClick("temple.edu");
+                }
+            },1000);
+
+        */
+
+
+
+
     }
 
     @Override
@@ -95,17 +133,47 @@ PagerFragment.PagerInterface, PageListFragment.PageListInterface {
         outState.putSerializable(PAGE_KEY, pages);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent receiveintent = getIntent();
+        String receivedAction = receiveintent.getAction();
+        if(Intent.ACTION_VIEW.equals(receivedAction)){
+            String templeedu = receiveintent.getStringExtra("templeedu");
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    buttonClick(templeedu);
+                }
+            },1000);
+
+        }
+
+    }
 
     @Override
     public void buttonClick(String Url) {
+        /*if(pages==null){
+            pages.add(new PageViewerFragment());
+            notifyWebsitesChanged();
+            pagerFragment.showTab(pages.size()-1);
+            pagerFragment.go(Url);
+        }
+
+         */
         if(pages.size()>0)
             pagerFragment.go(Url);
         else {
             pages.add(new PageViewerFragment());
             notifyWebsitesChanged();
             pagerFragment.showTab(pages.size()-1);
+            pagerFragment.go(Url);
         }
     }
+
+
+
     @Override
     public void saveData() {
         //String address = PageControlFragment.url_text.getEditableText().toString();
@@ -145,6 +213,33 @@ PagerFragment.PagerInterface, PageListFragment.PageListInterface {
         bookmarkintent.putExtra("bookmarkaddress",bookmarkaddress);
         //Log.d("At this point","Url is " + bookmarktitle.get(0));
         startActivityForResult(bookmarkintent,1);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //buttonClick("temple.edu");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        String btitle = pages.get(PagerFragment.viewPager.getCurrentItem()).currentTitle;
+        String baddress = PageControlFragment.url_text.getEditableText().toString();
+        int id = item.getItemId();
+        if(id == R.id.sharebutton){
+            Intent newintent = new Intent(Intent.ACTION_SEND);
+            newintent.setType("text/plain");
+            newintent.putExtra(Intent.EXTRA_TEXT,"Title: " + btitle + "\naddress is : " + baddress);
+            startActivity(newintent);
+        }
+        else
+            return false;
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -208,5 +303,10 @@ PagerFragment.PagerInterface, PageListFragment.PageListInterface {
     @Override
     public void updateTitle(String title) {
         this.setTitle(title);
+    }
+
+    @Override
+    public void setupviewpager() {
+        PagerFragment.setup();
     }
 }

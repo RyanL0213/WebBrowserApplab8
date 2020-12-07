@@ -1,6 +1,7 @@
 package temple.edu.webbrowserapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -42,6 +43,11 @@ public class PagerFragment extends Fragment {
         return fragment;
     }
 
+    public static void setup() {
+
+
+    }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -56,12 +62,37 @@ public class PagerFragment extends Fragment {
         //webtitlestring.add(currenttitle);
         //Log.d("Current title is ",currenttitle);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+       // go("temple.edu");
+
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(getArguments()!=null) {
             pages=(ArrayList) getArguments().getSerializable(PAGES_KEY);
         }
+        Intent getintent;
+        getintent = getActivity().getIntent();
+        String templeedu = getintent.getStringExtra("templeedu");
+        if(templeedu!=null){
+
+          //  go(templeedu);
+        }
+       // go("temple.edu");
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+      //  pages.add(new PageViewerFragment());
+       // go("temple.edu");
+
     }
 
     @Override
@@ -109,7 +140,7 @@ public class PagerFragment extends Fragment {
 
             }
         });
-
+//        go("temple.edu");
         return myView;
     }
 
@@ -119,6 +150,9 @@ public class PagerFragment extends Fragment {
     }
 
     public void notifyWebsitesChanged() {
+        if(viewPager==null){
+            Log.d("null","it is null");
+        }
         viewPager.getAdapter().notifyDataSetChanged();
     }
 
@@ -158,5 +192,6 @@ public class PagerFragment extends Fragment {
     interface PagerInterface {
         void updateUrl(String url);
         void updateTitle(String title);
+        void setupviewpager();
     }
 }
